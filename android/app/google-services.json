@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "10542484235",
+    "project_id": "bloom-journal-e3192",
+    "storage_bucket": "bloom-journal-e3192.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10542484235:android:89e51e78e38e377995300e",
+        "android_client_info": {
+          "package_name": "com.example.bloom_journal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA61EDVHco__NKEYpwdPSkIO084-vJP6Dc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
