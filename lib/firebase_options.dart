@@ -72,4 +72,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'bloom-journal-e3192.firebasestorage.app',
     iosBundleId: 'com.example.bloomJournal',
   );
+
 }
