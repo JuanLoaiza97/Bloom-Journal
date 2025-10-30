@@ -114,9 +114,12 @@
 //   }
 // }
 
+import 'package:bloom_journal/providers/auth_provider.dart';
+import 'package:bloom_journal/screen/home_screen.dart';
 import 'package:bloom_journal/screen/register_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../components/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -250,9 +253,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             elevation: 0,
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              // Lógica de login
+                              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const Center(child: CircularProgressIndicator()),
+                              );
+                              await authProvider.signIn(
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text,
+                              );
+                              Navigator.of(context).pop(); 
+
+                              if (authProvider.authState == AuthState.authenticated) {
+              
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(builder: (_) => const HomeScreen()), 
+                                );
+                              } else if (authProvider.authState == AuthState.error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(authProvider.errorMessage ?? 'Error iniciando sesión')),
+                                );
+                              }
                             }
                           },
                           child: const Text(
