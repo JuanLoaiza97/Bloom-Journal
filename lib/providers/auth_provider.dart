@@ -153,6 +153,9 @@ class AuthProvider extends ChangeNotifier {
         case 'user-disabled':
           message = 'This user has been disabled.';
           break;
+        case 'invalid-credential':
+          message = 'The supplied credentials are invalid.';
+          break;
         default:
           message = 'An error occurred. Please try again.';
       }
