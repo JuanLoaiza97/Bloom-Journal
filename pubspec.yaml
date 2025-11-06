@@ -33,4 +33,10 @@ flutter:
 
   assets:
     - assets/images/logo.png
+    - assets/images/emojis/Feliz.png
+    - assets/images/emojis/Molesto.png
+    - assets/images/emojis/Neutral.png
+    - assets/images/emojis/Tranquilo.png
+    - assets/images/emojis/Triste.png
+
 
