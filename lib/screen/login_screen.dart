@@ -114,12 +114,13 @@
 //   }
 // }
 
-import 'package:bloom_journal/providers/auth_provider.dart';
+import 'package:bloom_journal/providers/auth_provider.dart' as auth;
 import 'package:bloom_journal/screen/home_screen.dart';
 import 'package:bloom_journal/screen/register_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // <-- requerido
 import '../components/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -254,30 +255,36 @@ class _LoginScreenState extends State<LoginScreen> {
                             elevation: 0,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                            if (!_formKey.currentState!.validate()) return;
 
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (_) => const Center(child: CircularProgressIndicator()),
-                              );
-                              await authProvider.signIn(
-                                email: _emailController.text.trim(),
-                                password: _passwordController.text,
-                              );
-                              Navigator.of(context).pop(); 
+                            final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
+                            final email = _emailController.text.trim();
+                            final password = _passwordController.text;
 
-                              if (authProvider.authState == AuthState.authenticated) {
-              
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => const Center(child: CircularProgressIndicator()),
+                            );
+
+                            try {
+                              await authProvider.signIn(email: email, password: password);
+
+                              if (authProvider.authState == auth.AuthState.authenticated) {
+                                Navigator.of(context).pop(); 
                                 Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(builder: (_) => const HomeScreen()), 
+                                  MaterialPageRoute(builder: (_) => const HomeScreen()),
                                 );
-                              } else if (authProvider.authState == AuthState.error) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(authProvider.errorMessage ?? 'Error iniciando sesión')),
-                                );
+                              } else {
+                                Navigator.of(context).pop(); 
+                                final displayed = authProvider.errorMessage ?? 'Error al iniciar sesión.';
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(displayed)));
                               }
+                            } catch (e) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error inesperado: ${e.toString()}')),
+                              );
                             }
                           },
                           child: const Text(
@@ -361,5 +368,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-

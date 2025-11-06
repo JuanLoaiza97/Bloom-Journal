@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
-    final int notesCount = 4;
+    final int notesCount = 4; //Cambiar ésta constante por el nombre de la variable correcta
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F8FB),
