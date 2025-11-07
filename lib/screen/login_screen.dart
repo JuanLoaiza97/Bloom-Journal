@@ -1,126 +1,11 @@
-// import 'package:bloom_journal/screen/register_screen.dart';
-// import 'package:flutter/gestures.dart';
-// import 'package:flutter/material.dart';
-// import '../components/custom_text_field.dart';
-
-// class LoginScreen extends StatefulWidget {
-//   const LoginScreen({super.key});
-
-//   @override
-//   State<LoginScreen> createState() => _LoginScreenState();
-// }
-
-// class _LoginScreenState extends State<LoginScreen> {
-//   final _formKey = GlobalKey<FormState>();
-//   final TextEditingController _emailController = TextEditingController();
-//   final TextEditingController _passwordController = TextEditingController();
-
-//   @override
-//   void dispose() {
-//     _emailController.dispose();
-//     _passwordController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Center(
-//         child: Padding(
-//           padding: const EdgeInsets.all(16.0),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 Text(
-//                   'Welcome to Bloom Journal',
-//                   style: const TextStyle(
-//                     fontSize: 30,
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 30),
-//                 CustomTextField(
-//                   label: 'Email',
-//                   controller: _emailController,
-//                   placeholder: 'Enter your email',
-//                   keyboardType: TextInputType.emailAddress,
-//                   validator: (value) {
-//                     if (value == null || value.isEmpty) {
-//                       return 'Please enter your email';
-//                     }
-//                     if (!RegExp(
-//                       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-//                     ).hasMatch(value)) {
-//                       return 'Please enter a valid email';
-//                     }
-//                     return null;
-//                   },
-//                 ),
-//                 const SizedBox(height: 15),
-//                 CustomTextField(
-//                   label: 'Password',
-//                   controller: _passwordController,
-//                   placeholder: 'Enter your password',
-//                   isPassword: true,
-//                   validator: (value) {
-//                     if (value == null || value.isEmpty) {
-//                       return 'Please enter your password';
-//                     }
-//                     return null;
-//                   },
-//                 ),
-//                 const SizedBox(height: 30),
-//                 ElevatedButton(
-//                   onPressed: () {
-//                     if (_formKey.currentState!.validate()) {
-//                       // Handle login logic here
-//                     }
-//                   },
-//                   child: const Text('Login'),
-//                 ),
-//                 SizedBox(height: 20),
-//                 Align(
-//                   alignment: Alignment.center,
-//                   child: RichText(
-//                     text: TextSpan(
-//                       text: "Don't have an account? ",
-//                       style: const TextStyle(color: Colors.black, fontSize: 20),
-//                       children: [
-//                         TextSpan(
-//                           text: 'Register',
-//                           style: const TextStyle(color: Colors.blue),
-//                           recognizer: TapGestureRecognizer()
-//                             ..onTap = () {
-//                               Navigator.push(
-//                                 context,
-//                                 MaterialPageRoute(
-//                                   builder: (context) => const RegisterScreen(),
-//                                 ),
-//                               );
-//                             },
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:bloom_journal/providers/auth_provider.dart' as auth;
 import 'package:bloom_journal/screen/home_screen.dart';
 import 'package:bloom_journal/screen/register_screen.dart';
+import 'package:bloom_journal/screen/forgot_password_screen.dart'; // ✅ Import agregado
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // <-- requerido
+import 'package:firebase_auth/firebase_auth.dart';
 import '../components/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -191,10 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 6),
               Text(
                 '¡Bienvenido de nuevo!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
               ),
 
               const SizedBox(height: 40),
@@ -247,8 +129,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 50,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 110, 231, 183),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              110,
+                              231,
+                              183,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -257,33 +143,52 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () async {
                             if (!_formKey.currentState!.validate()) return;
 
-                            final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
+                            final authProvider = Provider.of<auth.AuthProvider>(
+                              context,
+                              listen: false,
+                            );
                             final email = _emailController.text.trim();
                             final password = _passwordController.text;
 
                             showDialog(
                               context: context,
                               barrierDismissible: false,
-                              builder: (_) => const Center(child: CircularProgressIndicator()),
+                              builder: (_) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             );
 
                             try {
-                              await authProvider.signIn(email: email, password: password);
+                              await authProvider.signIn(
+                                email: email,
+                                password: password,
+                              );
 
-                              if (authProvider.authState == auth.AuthState.authenticated) {
-                                Navigator.of(context).pop(); 
+                              if (authProvider.authState ==
+                                  auth.AuthState.authenticated) {
+                                Navigator.of(context).pop();
                                 Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                                  MaterialPageRoute(
+                                    builder: (_) => const HomeScreen(),
+                                  ),
                                 );
                               } else {
-                                Navigator.of(context).pop(); 
-                                final displayed = authProvider.errorMessage ?? 'Error al iniciar sesión.';
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(displayed)));
+                                Navigator.of(context).pop();
+                                final displayed =
+                                    authProvider.errorMessage ??
+                                    'Error al iniciar sesión.';
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(displayed)),
+                                );
                               }
                             } catch (e) {
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error inesperado: ${e.toString()}')),
+                                SnackBar(
+                                  content: Text(
+                                    'Error inesperado: ${e.toString()}',
+                                  ),
+                                ),
                               );
                             }
                           },
@@ -332,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 20),
 
-                      // Texto recuperar contraseña
+                      // ✅ Texto recuperar contraseña (corregido)
                       RichText(
                         text: TextSpan(
                           text: "¿Olvidaste tu contraseña? ",
@@ -349,7 +254,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  // Aquí puedes agregar la pantalla de recuperación
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ForgotPasswordScreen(),
+                                    ),
+                                  );
                                 },
                             ),
                           ],
