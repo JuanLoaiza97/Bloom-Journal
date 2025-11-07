@@ -33,6 +33,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Future<void> _createPost() async {
     if (!_formKey.currentState!.validate()) return;
+
     if (selectedMood == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Selecciona un estado de ánimo 🥺')),
@@ -57,13 +58,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         return;
       }
 
-      // ✅ Guardar post con UID y timestamp doble
+      final String title = _titleController.text.trim();
+      final String description = _descriptionController.text.trim();
+
+      // ✅ Guardar post con campos lower para permitir búsqueda
       await FirebaseFirestore.instance.collection('posts').add({
         'userId': currentUser.uid,
         'userEmail': currentUser.email ?? '',
         'mood': selectedMood,
-        'title': _titleController.text.trim(),
-        'description': _descriptionController.text.trim(),
+
+        // Texto original
+        'title': title,
+        'description': description,
+
+        // ✅ Texto en minúsculas (para búsqueda)
+        'title_lower': title.toLowerCase(),
+        'description_lower': description.toLowerCase(),
+
+        // Fechas
         'createdAt': FieldValue.serverTimestamp(),
         'localCreatedAt': Timestamp.now(),
       });
@@ -76,9 +88,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
     } catch (e) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al publicar: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al publicar: $e')));
     }
   }
 
@@ -104,8 +116,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('¿Cómo te sientes hoy?',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                const Text(
+                  '¿Cómo te sientes hoy?',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+
                 const SizedBox(height: 16),
 
                 // Emojis
@@ -140,9 +155,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
 
                 const SizedBox(height: 35),
-                const Text('Título',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+
+                const Text(
+                  'Título',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
                 const SizedBox(height: 10),
 
                 TextFormField(
@@ -153,7 +170,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     hintText: 'Escribe un título breve...',
                     filled: true,
                     fillColor: Colors.white,
-                    prefixIcon: const Icon(Icons.title, color: Color(0xFF6C63FF)),
+                    prefixIcon: const Icon(
+                      Icons.title,
+                      color: Color(0xFF6C63FF),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -162,9 +182,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
 
                 const SizedBox(height: 30),
-                const Text('Exprésate',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+
+                const Text(
+                  'Exprésate',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
                 const SizedBox(height: 10),
 
                 TextFormField(
@@ -192,18 +214,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   child: ElevatedButton(
                     onPressed: _createPost,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 110, 231, 183),
+                      backgroundColor: const Color.fromARGB(255, 110, 231, 183),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                       elevation: 0,
                     ),
                     child: const Text(
                       'Publicar',
                       style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
