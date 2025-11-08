@@ -1,3 +1,4 @@
+import 'package:bloom_journal/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -186,6 +187,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       value: notificationsEnabled,
                       onChanged: (value) {
                         setState(() => notificationsEnabled = value);
+                        if (value) {
+                          NotificationService().startPeriodicNotifications();
+                        } else {
+                          NotificationService().stopPeriodicNotifications();
+                        }
                       },
                     ),
                   ],
