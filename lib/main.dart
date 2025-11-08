@@ -1,4 +1,5 @@
 import 'package:bloom_journal/providers/auth_provider.dart';
+import 'package:bloom_journal/services/notification_service.dart';
 import 'package:bloom_journal/screen/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationService().init();
   runApp(
     ChangeNotifierProvider(
       create: (_) => AuthProvider(),
