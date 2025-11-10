@@ -12,15 +12,6 @@ Color de emoción neutra	        Amarillo pastel 	#FFF1A6
 
 
 
-FALTA:
-login
-    recuperar contraseña
-registrase
-    crear los terminos de condiciones
-Home
-    implementar la logica de buscar
-mi perfil
-    cambiar usuario por Hola, <nombre de usuario>
-    crear boton "volver"
 
-implementar la logica de las notificaciones
+
+

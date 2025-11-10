@@ -2,7 +2,8 @@ import 'package:bloom_journal/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login_screen.dart'; // 👈 importa la pantalla de login
+import 'login_screen.dart';
+import 'home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -47,7 +48,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 30),
+              // 🔙 Botón Volver (arriba a la izquierda)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFF6C63FF), size: 28),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 10),
 
               // 🌸 Logo
               Image.asset(
@@ -70,10 +85,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 25),
 
-              // 👤 Nombre de usuario
-              Text(
-                user?.displayName ?? 'Usuario',
-                style: const TextStyle(
+              // 👋 Saludo simple
+              const Text(
+                'Hola!',
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -93,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 40),
 
-              // 📊 Sección "Tu actividad"
+              // 📊 Actividad
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -109,8 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -147,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 40),
 
-              // ⚙️ Sección preferencias
+              // ⚙️ Preferencias
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -162,8 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 10),
 
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -207,20 +220,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();
-
-                    // 🔥 Cierra todas las pantallas y redirige al Login
                     if (context.mounted) {
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
                         (route) => false,
                       );
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color.fromARGB(255, 110, 231, 183),
+                    backgroundColor: const Color(0xFF6C63FF), // 💜 Morado
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
