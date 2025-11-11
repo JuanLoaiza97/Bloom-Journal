@@ -16,8 +16,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = '';
+  int? _moodFilter;
 
-  // ✅ Normaliza texto (igual que en SearchPosts, para comparar)
   String normalize(String text) {
     const withAccents = 'áéíóúÁÉÍÓÚäëïöüÄËÏÖÜ';
     const withoutAccents = 'aeiouAEIOUaeiouAEIOU';
@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ------------------ HEADER -----------------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -72,18 +71,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 20),
 
-              // ✅ BARRA DE BÚSQUEDA
+              // BARRA DE BÚSQUEDA Y ICONOS DE EMOCIONES
               SearchPosts(
                 onSearch: (query) {
                   setState(() {
                     _searchQuery = query;
                   });
                 },
+                onMoodSelected: (mood) {
+                  setState(() {
+                    _moodFilter = mood;
+                  });
+                },
               ),
 
               const SizedBox(height: 20),
 
-              // ------------------ LISTA DE POSTS -----------------------
+              // POSTS
               Expanded(
                 child: user == null
                     ? const Center(
@@ -114,17 +118,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           final docs = snapshot.data?.docs ?? [];
 
-                          // ✅ Filtrado local (sin tildes ni mayúsculas)
+                          // ✅ Filtro
                           final filteredDocs = docs.where((doc) {
                             final data =
                                 doc.data() as Map<String, dynamic>? ?? {};
+
                             final title = normalize(data['title'] ?? '');
                             final desc = normalize(data['description'] ?? '');
+                            final mood = data['mood'] as int?;
+
                             final search = _searchQuery;
 
-                            if (search.isEmpty) return true;
-                            return title.contains(search) ||
+                            final matchesText =
+                                search.isEmpty ||
+                                title.contains(search) ||
                                 desc.contains(search);
+
+                            final matchesMood =
+                                _moodFilter == null || _moodFilter == mood;
+
+                            return matchesText && matchesMood;
                           }).toList();
 
                           if (filteredDocs.isEmpty) {
@@ -159,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 10),
 
-              // ------------------ BOTÓN CREAR POST -----------------------
+              //CREAR POST
               SizedBox(
                 width: double.infinity,
                 height: 55,
